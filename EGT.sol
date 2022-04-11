@@ -442,7 +442,7 @@
   }
   
   
-  contract CoinTool is Context, IERC20, Ownable {
+  contract egt is Context, IERC20, Ownable {
       using SafeMath for uint256;
       using Address for address;
   
@@ -460,8 +460,8 @@
       uint256 private _rTotal = (MAX - (MAX % _tTotal));
       uint256 private _tFeeTotal;
   
-      string private _name = "CoinTool";
-      string private _symbol = "CoinTool";
+      string private _name = "egt";
+      string private _symbol = "egt";
       uint8 private _decimals = 9;
       
       uint256 public _taxFee = 5;
