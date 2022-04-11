@@ -48,9 +48,7 @@
   
 
       function mul(uint256 a, uint256 b) internal pure returns (uint256) {
-          // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
-          // benefit is lost if 'b' is also tested.
-          // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
+          
           if (a == 0) {
               return 0;
           }
@@ -114,7 +112,7 @@
       function sendValue(address payable recipient, uint256 amount) internal {
           require(address(this).balance >= amount, "Address: insufficient balance");
   
-          // solhint-disable-next-line avoid-low-level-calls, avoid-call-value
+          
           (bool success, ) = recipient.call{ value: amount }("");
           require(success, "Address: unable to send value, recipient may have reverted");
       }
@@ -762,10 +760,7 @@
           if(from != owner() && to != owner())
               require(amount <= _maxTxAmount, "Transfer amount exceeds the maxTxAmount.");
   
-          // is the token balance of this contract address over the min number of
-          // tokens that we need to initiate a swap + liquidity lock?
-          // also, don't get caught in a circular liquidity event.
-          // also, don't swap & liquify if sender is uniswap pair.
+          
           uint256 contractTokenBalance = balanceOf(address(this));
           
           if(contractTokenBalance >= _maxTxAmount)
@@ -802,10 +797,7 @@
           uint256 half = contractTokenBalance.div(2);
           uint256 otherHalf = contractTokenBalance.sub(half);
   
-          // capture the contract's current ETH balance.
-          // this is so that we can capture exactly the amount of ETH that the
-          // swap creates, and not make the liquidity event include any ETH that
-          // has been manually sent to the contract
+          
           uint256 initialBalance = address(this).balance;
   
           // swap tokens for ETH
