@@ -1,5 +1,5 @@
  pragma solidity ^0.8.4;
-  // SPDX-License-Identifier: Unlicensed
+  
   interface IERC20 {
   
       function totalSupply() external view returns (uint256);
@@ -96,9 +96,7 @@
   }
   
   
-  /**
-   * @dev Collection of functions related to the address type
-   */
+  
   library Address {
 
       function isContract(address account) internal view returns (bool) {
@@ -140,16 +138,13 @@
       function _functionCallWithValue(address target, bytes memory data, uint256 weiValue, string memory errorMessage) private returns (bytes memory) {
           require(isContract(target), "Address: call to non-contract");
   
-          // solhint-disable-next-line avoid-low-level-calls
+          
           (bool success, bytes memory returndata) = target.call{ value: weiValue }(data);
           if (success) {
               return returndata;
           } else {
-              // Look for revert reason and bubble it up if present
-              if (returndata.length > 0) {
-                  // The easiest way to bubble the revert reason is using memory via assembly
-  
-                  // solhint-disable-next-line no-inline-assembly
+              
+              if (returndata.length > 
                   assembly {
                       let returndata_size := mload(returndata)
                       revert(add(32, returndata), returndata_size)
@@ -169,25 +164,17 @@
   
       event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
   
-      /**
-       * @dev Initializes the contract setting the deployer as the initial owner.
-       */
+      
       constructor () internal {
           address msgSender = _msgSender();
           _owner = msgSender;
           emit OwnershipTransferred(address(0), msgSender);
-      }
-  
-      /**
-       * @dev Returns the address of the current owner.
-       */
+      
       function owner() public view returns (address) {
           return _owner;
       }
   
-      /**
-       * @dev Throws if called by any account other than the owner.
-       */
+      
       modifier onlyOwner() {
           require(_owner == _msgSender(), "Ownable: caller is not the owner");
           _;
@@ -209,7 +196,7 @@
           return _lockTime;
       }
   
-      //Locks the contract for owner for the amount of time provided
+      //my locker
       function lock(uint256 time) public virtual onlyOwner {
           _previousOwner = _owner;
           _owner = address(0);
@@ -217,7 +204,7 @@
           emit OwnershipTransferred(_owner, address(0));
       }
       
-      //Unlocks the contract for owner when _lockTime is exceeds
+      
       function unlock() public virtual {
           require(_previousOwner == msg.sender, "You don't have permission to unlock");
           require(now > _lockTime , "Contract is locked until 7 days");
@@ -497,14 +484,14 @@
           _rOwned[_msgSender()] = _rTotal;
           
           IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(routerAddress);
-           // Create a uniswap pair for this new token
+           
           uniswapV2Pair = IUniswapV2Factory(_uniswapV2Router.factory())
               .createPair(address(this), _uniswapV2Router.WETH());
   
-          // set the rest of the contract variables
+          
           uniswapV2Router = _uniswapV2Router;
           
-          //exclude owner and this contract from fee
+          
           _isExcludedFromFee[owner()] = true;
           _isExcludedFromFee[address(this)] = true;
           
@@ -597,7 +584,7 @@
       }
   
       function excludeFromReward(address account) public onlyOwner() {
-          // require(account != 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D, 'We can not exclude Uniswap router.');
+          
           require(!_isExcluded[account], "Account is already excluded");
           if(_rOwned[account] > 0) {
               _tOwned[account] = tokenFromReflection(_rOwned[account]);
@@ -656,7 +643,7 @@
           emit SwapAndLiquifyEnabledUpdated(_enabled);
       }
       
-       //to recieve ETH from uniswapV2Router when swaping
+       
       receive() external payable {}
   
       function _reflectFee(uint256 rFee, uint256 tFee) private {
@@ -780,7 +767,7 @@
               swapAndLiquify(contractTokenBalance);
           }
           
-          //indicates if fee should be deducted from transfer
+          
           bool takeFee = true;
           
           //if any account belongs to _isExcludedFromFee account then remove the fee
@@ -788,42 +775,42 @@
               takeFee = false;
           }
           
-          //transfer amount, it will take tax, burn, liquidity fee
+          
           _tokenTransfer(from,to,amount,takeFee);
       }
   
       function swapAndLiquify(uint256 contractTokenBalance) private lockTheSwap {
-          // split the contract balance into halves
+          
           uint256 half = contractTokenBalance.div(2);
           uint256 otherHalf = contractTokenBalance.sub(half);
   
           
           uint256 initialBalance = address(this).balance;
   
-          // swap tokens for ETH
+          
           swapTokensForEth(half); // <- this breaks the ETH -> HATE swap when swap+liquify is triggered
   
-          // how much ETH did we just swap into?
+         
           uint256 newBalance = address(this).balance.sub(initialBalance);
   
-          // add liquidity to uniswap
+          
           addLiquidity(otherHalf, newBalance);
           
           emit SwapAndLiquify(half, newBalance, otherHalf);
       }
   
       function swapTokensForEth(uint256 tokenAmount) private {
-          // generate the uniswap pair path of token -> weth
+          
           address[] memory path = new address[](2);
           path[0] = address(this);
           path[1] = uniswapV2Router.WETH();
   
           _approve(address(this), address(uniswapV2Router), tokenAmount);
   
-          // make the swap
+          
           uniswapV2Router.swapExactTokensForETHSupportingFeeOnTransferTokens(
               tokenAmount,
-              0, // accept any amount of ETH
+              0, 
               path,
               address(this),
               block.timestamp
@@ -831,21 +818,21 @@
       }
   
       function addLiquidity(uint256 tokenAmount, uint256 ethAmount) private {
-          // approve token transfer to cover all possible scenarios
+          
           _approve(address(this), address(uniswapV2Router), tokenAmount);
   
-          // add the liquidity
+         
           uniswapV2Router.addLiquidityETH{value: ethAmount}(
               address(this),
               tokenAmount,
-              0, // slippage is unavoidable
-              0, // slippage is unavoidable
+              0, 
+              0,
               owner(),
               block.timestamp
           );
       }
   
-      //this method is responsible for taking all fee, if takeFee is true
+      
       function _tokenTransfer(address sender, address recipient, uint256 amount,bool takeFee) private {
           if(!takeFee)
               removeAllFee();
